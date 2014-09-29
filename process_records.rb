@@ -24,6 +24,111 @@
 
 # BONUS 2 - uses classes for each shipment; but not necessary
 
-open("planet_express_logs").each do |line|
-  p line.chomp
+# class shipment
+#   @planet, @item, @quantity, @money, @pilot
+#
+# end
+
+#entries = []
+
+class Shipment
+
+  attr_accessor :planet, :item, :quantity, :money, :pilot, :bonus
+
+  def initialize(planet,item,quantity,money)
+    @planet = planet
+    @item = item
+    @quantity = quantity.to_i
+    @money = money.to_i
+    @pilot = ""
+    @bonus = 0
+  end
 end
+
+
+# Make an empty array of classes
+$shipments = []
+open("planet_express_logs").each do |line|
+
+  s = Shipment.new(*line.chomp.split(','))
+
+  $shipments << s
+
+end
+
+$shipments.each do |ship|
+
+  case ship.planet
+  when "Earth"
+    ship.pilot = "Fry"
+    ship.bonus = ship.money * 0.1
+  when "Mars"
+    ship.pilot = "Amy"
+    ship.bonus = ship.money * 0.1
+  when "Uranus"
+    ship.pilot = "Bender"
+    ship.bonus = ship.money * 0.1
+  else
+    ship.pilot = "Leela"
+    ship.bonus = ship.money * 0.1
+  end
+
+end
+
+
+def get_money_made
+  total_money = 0
+  $shipments.each do |ship|
+    total_money += ship.money
+  end
+  return total_money
+end
+
+
+
+
+def get_pilot_trips
+  pilot_trips = {}
+  $shipments.each do |ship|
+    if pilot_trips[ship.pilot]
+      pilot_trips[ship.pilot] += 1
+    else
+      pilot_trips[ship.pilot] = 1
+    end
+  end
+  return pilot_trips
+end
+
+
+def get_pilot_bonus
+  pilot_bonus = {}
+  $shipments.each do |ship|
+    if pilot_bonus[ship.pilot]
+      pilot_bonus[ship.pilot] += ship.bonus
+    else
+      pilot_bonus[ship.pilot] = ship.bonus
+    end
+  end
+  return pilot_bonus
+end
+
+
+
+
+def get_money_by_planet
+  planet_money = {}
+  $shipments.each do |ship|
+    if planet_money[ship.planet]
+      planet_money[ship.planet] += ship.money
+    else
+      planet_money[ship.planet] = ship.money
+    end
+  end
+  return planet_money
+end
+p "Total money made : #{get_money_made}"
+
+p "Bonus each pilot gets : "
+p get_pilot_bonus
+p "Money made from each planet: "
+p get_money_by_planet
